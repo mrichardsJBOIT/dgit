@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Scanner;
 
@@ -15,12 +17,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
-import com.dgit.controllers.NamesValidationController;
+import com.dgit.controllers.WordCounter;
 
 import java.io.InputStream;
  
-//@WebServlet("/upload")
-//@MultipartConfig(location = "/var/lib/openshift/55f2dcbd2d5271d54a00013f/app-root/data")
 @MultipartConfig()
 public class FileUploadServlet extends HttpServlet {
  
@@ -41,108 +41,53 @@ public class FileUploadServlet extends HttpServlet {
         
     	response.setContentType("text/html");
     	PrintWriter out = response.getWriter();
-    	NamesValidationController namesTester = new NamesValidationController();
-    	String uploadPath = System.getenv("OPENSHIFT_DATA_DIR");
-    	if (null == uploadPath){
-    		uploadPath = request.getServletContext().getRealPath("")+UPLOAD_DIR;
-    	}
+    	
+    	String uploadPath = request.getServletContext().getRealPath("")+UPLOAD_DIR;
+    	
     	// creates the save directory if it does not exists
         File fileSaveDir = new File(uploadPath);
         if (!fileSaveDir.exists()) {
             fileSaveDir.mkdirs();
-        }
-    	
+        }    	
     	
         for (Part part : request.getParts()) {
         	
-            InputStream is = request.getPart(part.getName()).getInputStream();            
-            
-            String inputStreamString = new Scanner(is,"UTF-8").useDelimiter("\\A").next();
+            InputStream is = request.getPart(part.getName()).getInputStream();                        
+            String inputStreamString = new Scanner(is,"UTF-8").useDelimiter("\\A").next();            
+            is.close();
             
             StringBuffer sb = new StringBuffer();
-            sb.append("<p>");
-            sb.append("Testing the following contents");
-            sb.append("</p> </br>");
-            out.println(sb.toString());
+            out.println("<p> Testing the following contents </p> </br>");
             out.println(inputStreamString);
+            out.println("<p> RESULTS::"+System.lineSeparator()+"</p>");
             
-            sb = new StringBuffer();
-            sb.append("<p>");
-            sb.append("RESULTS::");
-            sb.append("</p> </br>"); 
-            out.println(sb.toString());
+            WordCounter myWordCounter = new WordCounter();
+            myWordCounter.processList(inputStreamString);
             
-            namesTester.doValidation(inputStreamString);
-            out.println(namesTester.getNamesStartingWithMm());
+            out.println("<p> Number of words beginning with 'M' or 'm' :" + myWordCounter.getNumberOfWordStartingWithM() + "</br>");
             
-            sb = new StringBuffer();
-            sb.append("<p>");
-            sb.append("HAPPY>::");
-            sb.append("</p> </br>"); 
             
+            out.println(myWordCounter.getNamesStartingWithMm());
+            out.println("</br> </br>"+System.lineSeparator());
+            
+            out.println(" Number of words with five more letters: " + myWordCounter.getNumberOfWordsLongerThan5Chars());
+            out.println(" </br>"+System.lineSeparator());
+            out.println(myWordCounter.getNamesLongerThan5Chars());
+            out.println(" </p></br>"+System.lineSeparator());                      
+           
             String fileName = getFileName(part);
-            FileOutputStream os = new FileOutputStream(uploadPath + fileName);
-            byte[] bytes = new byte[BUFFER_LENGTH];
-            int read = 0;
-            while ((read = is.read(bytes, 0, BUFFER_LENGTH)) != -1) {
-                os.write(bytes, 0, read);
-                
-            }
+            Path p = Paths.get(fileName);
+            String file = p.getFileName().toString();
+            
+            FileOutputStream os = new FileOutputStream(uploadPath + file);
+            os.write(inputStreamString.getBytes());            
             os.flush();
-            is.close();
+           
             os.close();
-            out.println(fileName + " was uploaded to " +uploadPath);
+            out.println(fileName + " was uploaded to " +uploadPath + "\\"+ fileName);
         }
-        
-        
- 
-//        Collection<Part> parts = request.getParts();
-//        out.write("<!DOCTYPE html PUBLIC \''>");
-//        out.write("<h2> Total parts : " + parts.size() + "</h2>");
- 
-//        for (Part part : parts) {
-//            printEachPart(part, out);
-//            part.write(getFileName(part));
-//            InputStream fileContent =  request.getPart(part.getName()).getInputStream();
-//            String fileName = getFileName(part);
-//            ByteArrayOutputStream os = new ByteArrayOutputStream();
-//            int read = 0;
-//            final byte[] bytes = new byte[1024];
-//
-//            while ((read = fileContent.read(bytes)) != -1) {
-//            	 os.write(bytes, 0, read);
-//            	 
-//            }
-//            out.write(new String(os.toByteArray(),"UTF-8"));
-//            os.flush();
-//            fileContent.close();
-//            os.close();
-//            out.println(getFileName(part) + " was uploaded to " + System.getenv("OPENSHIFT_DATA_DIR"));
-//         }         
     }
- 
-    private void printEachPart(Part part, PrintWriter pw) {
-    	
-    	
-    	 
-    	 
-        StringBuffer sb = new StringBuffer();
-        sb.append("<p>");
-        sb.append("Name : " + part.getName());
-        sb.append("<br>");
-        sb.append("Content Type : " + part.getContentType());
-        sb.append("<br>");
-        sb.append("Size : " + part.getSize());
-        sb.append("<br>");
-        for (String header : part.getHeaderNames()) {
-            sb.append(header + " : " + part.getHeader(header));
-            sb.append("<br>");
-        }
-        sb.append("</p>");
-        pw.write(sb.toString());
- 
-    }
- 
+              
     private String getFileName(Part part) {
         String partHeader = part.getHeader("content-disposition");
         for (String cd : partHeader.split(";")) {

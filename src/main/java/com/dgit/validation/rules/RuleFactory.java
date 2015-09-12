@@ -28,15 +28,15 @@ public class RuleFactory {
 		
 		ValidationRule rule;
 		switch (ruleId) {
-			case NAMES_STARTING_M: rule = new NameRule(p -> p.getValue().toUpperCase().startsWith("M"), "Rule 1: Name Starts With M",NAMES_STARTING_M);
-			
-			case NAMES_LONGER_THAN_5_CHARS: rule = new NameRule(p -> p.getValue().length() > 5, "Rule 2: Name Longer Than 5  Characters ",NAMES_LONGER_THAN_5_CHARS);
-			
-			default : rule = null;		
+			case NAMES_STARTING_M: 
+				rule = new NameRule(p -> p.getValue().toUpperCase().startsWith("M"), "Rule 1: Name Starts With M",NAMES_STARTING_M);
+				break;				
+			case NAMES_LONGER_THAN_5_CHARS: 
+				rule = new NameRule(p -> p.getValue().length() > 5, "Rule 2: Name Longer Than 5  Characters ",NAMES_LONGER_THAN_5_CHARS);
+				break;
+			default : throw new NoRuleException(ruleId);		
 		}		
-		if (null == rule){					
-			throw new NoRuleException(ruleId);
-		}
+		
 		return rule;
 	}
 	
@@ -45,7 +45,7 @@ public class RuleFactory {
 		List<ValidationRule> rulesList = new ArrayList<ValidationRule>();
 		
 		try {					
-			for (int i =0; i<=NUMBER_OF_NAME_RULES; i++){
+			for (int i =1; i<=NUMBER_OF_NAME_RULES; i++){
 				rulesList.add(getNameRule(i));
 			}		
 		}

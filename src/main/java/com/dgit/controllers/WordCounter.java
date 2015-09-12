@@ -10,14 +10,14 @@ import com.dgit.validation.ValidationEngine;
 import com.dgit.validation.rules.RuleFactory;
 import com.dgit.validation.rules.ValidationRule;
 
-public class NamesValidationController {
+public class WordCounter {
 	
 	private ValidationEngine engine;
-	private String delimiter = "\\s";
+	public static String delimiter = "\\s";
 	private List<Name> nameListToValidate;
 	private Results validationResults;
 	
-	public NamesValidationController(){
+	public WordCounter(){
 		engine = new ValidationEngine();	
 	}
 	
@@ -37,10 +37,18 @@ public class NamesValidationController {
 	}
 	
 	public int getNumberOfWordsLongerThan5Chars(){
+		if (null != validationResults){
+			return validationResults.getNumberOfResultsForRule(RuleFactory.NAMES_LONGER_THAN_5_CHARS);	
+		}
 		return 0;
 	}
 	
 	public int getNumberOfWordStartingWithM() {
+		
+		if (null != validationResults){
+			return validationResults.getNumberOfResultsForRule(RuleFactory.NAMES_STARTING_M);	
+		}
+		
 		return 0;
 	}
 	
@@ -65,7 +73,7 @@ public class NamesValidationController {
         }        
 	}
 	
-	public void doValidation(String inputStreamString){
+	public void processList(String inputStreamString){
 		
 		if (null != inputStreamString){
 			

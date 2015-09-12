@@ -18,13 +18,18 @@ public class Results {
 	public boolean hasWords(){
 		return resultList.size() > 0 ? true : false;
 	}
+	
+	public int getNumberOfResultsForRule(int ruleId){
+		List<Result> filteredResults = resultList.stream().filter(p -> p.ruleId == ruleId).collect(Collectors.<Result>toList());
+		return filteredResults.size();
+	}
 
 	public String ruleReport(int ruleId ) {
 		
 		StringBuffer report = new StringBuffer("");
 		List<Result> filteredResults = resultList.stream().filter(p -> p.ruleId == ruleId).collect(Collectors.<Result>toList());
 		for (Result result : filteredResults) {
-			report.append(result.name.getValue());	
+			report.append(result.name.getValue()+System.lineSeparator());	
 			report.append(System.lineSeparator());	
 		}		 			 		 
 		
