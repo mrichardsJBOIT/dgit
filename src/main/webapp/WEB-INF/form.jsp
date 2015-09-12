@@ -4,10 +4,17 @@
 <html>
     <head></head>
     <body>
-        <p>Select Name File To Upload</p>
+        
         <form action="upload" enctype="multipart/form-data" method="POST">
+         	<p>Enter free text to process</p>
+         	<textarea cols="40" rows="5" name="freeText"></textarea>
+        	<!--  <input type="text" name="freeText" style="width: 300px;" >  -->
+        	
+        	<p>Select file to process </p>
             <input type="file" name="myFile"><br>
-            <input type="Submit" value="Upload File"><br>
+           <p> </p>
+           <p>If text area is populated, the file will be ignored</p>
+            <input type="Submit" value="Submit"><br>
         </form>
     </body>
 </html>

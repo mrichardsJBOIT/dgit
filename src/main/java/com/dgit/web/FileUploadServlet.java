@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Scanner;
 
 import javax.servlet.ServletException;
@@ -27,6 +29,7 @@ public class FileUploadServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     int BUFFER_LENGTH = 4096;
     private static final String UPLOAD_DIR = "uploads";
+    String uploadPath;
     
     @Override
 	protected void doGet(HttpServletRequest request,
@@ -39,53 +42,47 @@ public class FileUploadServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
         
+    	String fileName = new SimpleDateFormat("yyyyMMddmmss").format(new Date())+".txt";
+    	String inputData = request.getParameter("freeText");
+    	uploadPath = request.getServletContext().getRealPath("")+UPLOAD_DIR;
     	response.setContentType("text/html");
     	PrintWriter out = response.getWriter();
+    	WordCounter myWordCounter = new WordCounter();
     	
-    	String uploadPath = request.getServletContext().getRealPath("")+UPLOAD_DIR;
-    	
-    	// creates the save directory if it does not exists
-        File fileSaveDir = new File(uploadPath);
-        if (!fileSaveDir.exists()) {
-            fileSaveDir.mkdirs();
-        }    	
-    	
-        for (Part part : request.getParts()) {
-        	
-            InputStream is = request.getPart(part.getName()).getInputStream();                        
-            String inputStreamString = new Scanner(is,"UTF-8").useDelimiter("\\A").next();            
-            is.close();
-            
-            StringBuffer sb = new StringBuffer();
-            out.println("<p> Testing the following contents </p> </br>");
-            out.println(inputStreamString);
-            out.println("<p> RESULTS::"+System.lineSeparator()+"</p>");
-            
-            WordCounter myWordCounter = new WordCounter();
-            myWordCounter.processList(inputStreamString);
-            
-            out.println("<p> Number of words beginning with 'M' or 'm' :" + myWordCounter.getNumberOfWordStartingWithM() + "</br>");
-            
-            
-            out.println(myWordCounter.getNamesStartingWithMm());
-            out.println("</br> </br>"+System.lineSeparator());
-            
-            out.println(" Number of words with five more letters: " + myWordCounter.getNumberOfWordsLongerThan5Chars());
-            out.println(" </br>"+System.lineSeparator());
-            out.println(myWordCounter.getNamesLongerThan5Chars());
-            out.println(" </p></br>"+System.lineSeparator());                      
-           
-            String fileName = getFileName(part);
-            Path p = Paths.get(fileName);
-            String file = p.getFileName().toString();
-            
-            FileOutputStream os = new FileOutputStream(uploadPath + file);
-            os.write(inputStreamString.getBytes());            
-            os.flush();
-           
-            os.close();
-            out.println(fileName + " was uploaded to " +uploadPath + "\\"+ fileName);
-        }
+    	 if (inputData == null || inputData.trim().isEmpty()) { 
+    		 Part filePart = request.getPart("myFile");
+    		 //InputStream fileData = filePart.getInputStream();
+    		 fileName = getFileName(filePart);
+
+    		 Scanner scanner = new Scanner(filePart.getInputStream());
+    		 StringBuffer fileData = new StringBuffer();
+    		 
+    		 while(scanner.hasNextLine()){
+    			 fileData.append(scanner.nextLine());
+    		 }	   		
+    		 scanner.close();
+    		 inputData = fileData.toString();
+         } 
+	     
+    	 StringBuffer sb = new StringBuffer();
+	     out.println("<p> Testing the following contents </p> </br>");
+	     out.println(inputData);
+	     out.println("<p> RESULTS:: </p>");
+	
+	     myWordCounter.processList(inputData);
+	        	            
+	     out.println("<p> Number of words beginning with 'M' or 'm' :" + myWordCounter.getNumberOfWordStartingWithM() + "</br>");
+	     out.println(myWordCounter.getNamesStartingWithMm());
+	     out.println("</br> </br>");
+	        	            
+	     out.println(" Number of words with five more letters: " + myWordCounter.getNumberOfWordsLongerThan5Chars());
+	     out.println(" </br>");
+	     out.println(myWordCounter.getNamesLongerThan5Chars());
+	     out.println(" </p></br>");                                 
+	        
+	     saveData(inputData,fileName);
+	        	            
+	     out.println("Data was uploaded to " +uploadPath + File.separator+ fileName);
     }
               
     private String getFileName(Part part) {
@@ -96,5 +93,23 @@ public class FileUploadServlet extends HttpServlet {
             }
         }
         return null;
+    }
+    
+    private void saveData(String inputData,String fileName){
+    	// creates the save directory if it does not exists
+    	Path p = Paths.get(fileName);
+    	String file = p.getFileName().toString();
+    	File fileSaveDir = new File(uploadPath);
+    	if (!fileSaveDir.exists()) {
+    		fileSaveDir.mkdirs();
+    	 }    
+    	try {
+    		 FileOutputStream os = new FileOutputStream(uploadPath +File.separator+ fileName);
+        	 os.write(inputData.getBytes());            
+        	 os.flush();           
+        	 os.close();        	
+    	} catch(IOException ex){
+    		//Add some logging code here
+    	}
     }
 }
