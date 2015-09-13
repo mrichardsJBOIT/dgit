@@ -1,14 +1,15 @@
 package com.dgit.model;
 
+/**
+* Model class that encapsulates individual names. 
+*/ 
 public class Name {
 	private String value;
-	
 	
 	public Name(String value) {
 		super();
 		this.value = value;
 	}
-
 
 	public String getValue() {
 		return value;

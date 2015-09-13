@@ -22,7 +22,14 @@ import javax.servlet.http.Part;
 import com.dgit.controllers.WordCounter;
 
 import java.io.InputStream;
- 
+/**
+ * When the HTTP GET Method is called the servelt forwards the request to a jsp that prompts the user for 
+ * some text input or a local file to submit for processing
+ * The HTTP POST method passes text data or a file with data to be processed
+ * The servlet parses the input data and passes to the Word Counter for processing.
+ * The servlet then calls the Word Counter to gain access to the results
+ * The results are formated and displayed in the response to the user
+*/
 @MultipartConfig()
 public class FileUploadServlet extends HttpServlet {
  

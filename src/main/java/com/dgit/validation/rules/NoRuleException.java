@@ -1,5 +1,8 @@
 package com.dgit.validation.rules;
 
+/**
+ * Thrown if rule is attempted be created with wrong or no id
+*/
 public class NoRuleException extends Exception {
 	
 	int ruleId;

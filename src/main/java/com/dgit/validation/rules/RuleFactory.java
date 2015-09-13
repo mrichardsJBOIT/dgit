@@ -3,6 +3,9 @@ package com.dgit.validation.rules;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Factory class that abstracts the rule creation to a single class.
+*/
 public class RuleFactory {
 	
 	public static final int NUMBER_OF_NAME_RULES = 2;  
@@ -23,8 +26,14 @@ public class RuleFactory {
 	      return instance;		
 	}
 	
-
-	public ValidationRule getNameRule(int ruleId) throws NoRuleException {
+	/**
+	* Internal method where the rules are defined
+	* Rules are created using Lambda Expressions, they are given an incremental number and description
+	* Further rules can be added be extending the case statements
+	* A Rule object is relatively straight forward in 
+	* keeping with the data model - Name object which the rule is checked against.
+	*/
+	private ValidationRule getNameRule(int ruleId) throws NoRuleException {
 		
 		ValidationRule rule;
 		switch (ruleId) {
@@ -40,7 +49,11 @@ public class RuleFactory {
 		return rule;
 	}
 	
-	public  List<ValidationRule> getAllNameRules(){
+	/**
+	* Accessor method that creates the rules and stores into a list that is returned to the calling class
+	* @return List<ValidationRule>
+	*/
+	public List<ValidationRule> getAllNameRules(){
 		
 		List<ValidationRule> rulesList = new ArrayList<ValidationRule>();
 		
