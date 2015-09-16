@@ -1,4 +1,4 @@
-package com.dgit.validation.rules;
+package com.dgit.countwords.validation.rules;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,17 +55,16 @@ public class RuleFactory {
 	*/
 	public List<ValidationRule> getAllNameRules(){
 		
-		List<ValidationRule> rulesList = new ArrayList<ValidationRule>();
-		
-		try {					
+		List<ValidationRule> rulesList = new ArrayList<ValidationRule>();						
 			for (int i =1; i<=NUMBER_OF_NAME_RULES; i++){
-				rulesList.add(getNameRule(i));
-			}		
-		}
-		catch(NoRuleException ne){
-			//We need to implement loggoing for this.
-			//using constants NUMBER_OF_NAME_RULES should stop this exception occuring in this method. 
-		}
+				try {	
+					rulesList.add(getNameRule(i));
+				}
+				catch(NoRuleException ne){
+					//We need to implement logging for this.
+					//using constants NUMBER_OF_NAME_RULES should stop this exception occurring in this method. 
+				}
+			}				
 		return rulesList;
 	}
 }

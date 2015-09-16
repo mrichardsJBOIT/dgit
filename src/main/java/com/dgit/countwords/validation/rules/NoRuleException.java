@@ -1,8 +1,9 @@
-package com.dgit.validation.rules;
+package com.dgit.countwords.validation.rules;
 
 /**
  * Thrown if rule is attempted be created with wrong or no id
 */
+@SuppressWarnings("serial")
 public class NoRuleException extends Exception {
 	
 	int ruleId;

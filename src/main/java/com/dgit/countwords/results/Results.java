@@ -1,11 +1,11 @@
-package com.dgit.validation;
+package com.dgit.countwords.results;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.dgit.model.Name;
-import com.dgit.validation.rules.ValidationRule;
+import com.dgit.countwords.model.Name;
+import com.dgit.countwords.validation.rules.ValidationRule;
 
 /**
 * Wrapper class that holds the list of results and 
@@ -43,7 +43,7 @@ public class Results {
 		StringBuffer report = new StringBuffer("");
 		List<Result> filteredResults = resultList.stream().filter(p -> p.ruleId == ruleId).collect(Collectors.<Result>toList());
 		for (Result result : filteredResults) {
-			report.append(result.name.getValue()+System.lineSeparator());	
+			report.append(result.name.getValue()+System.lineSeparator());	//Not sure about the line Separator - it should probably be the delimter from the WordCounter class
 			report.append(System.lineSeparator());	
 		}		 			 		 
 		
@@ -51,11 +51,11 @@ public class Results {
 	}
 	
 	/**
-	* Generic method that returns a list of strings names
-	* that satisfy the rule id that is passed in
+	* Generic method that returns a list of strings which are the names
+	* that satisfy the rule identified by the integer passed in
 	* @return List<String>
 	*/
-	public List<String> getRuleNames(int ruleId){
+	public List<String> getRuleReportList(int ruleId){
 		
 		List<String> nameList = new ArrayList<String>();
 		List<Result> filteredResults = resultList.stream().filter(p -> p.ruleId == ruleId).collect(Collectors.<Result>toList());
@@ -70,7 +70,7 @@ public class Results {
 	* Internal wrapper class used to enable filtering of
 	* result set by rule id 
 	*/               
-	private class Result {
+	public class Result {
 		
 		private Name name;
 		private int ruleId;

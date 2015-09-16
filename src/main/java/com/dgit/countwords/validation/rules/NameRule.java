@@ -1,7 +1,8 @@
-package com.dgit.validation.rules;
+package com.dgit.countwords.validation.rules;
 
-import com.dgit.model.Name;
-import com.dgit.validation.Results;
+import com.dgit.countwords.model.Name;
+import com.dgit.countwords.results.Results;
+
 import java.util.function.Predicate;
  
 /**
@@ -12,7 +13,7 @@ public class NameRule implements ValidationRule {
 
 	private Predicate<Name> condition;
 	private String description;
-	private int iD=0;
+	private int iD;
 	
 	/**
 	 * Constructor -  calling class must be aware of Lambda Expressions
@@ -20,15 +21,9 @@ public class NameRule implements ValidationRule {
 	*/
 	public NameRule(Predicate<Name> aCondition, String aDescription, int anID) {
 		super();
-		this.condition = aCondition;
-		this.description = aDescription;
-		this.iD = anID;
-	}
-
-	
-	private boolean condition(Name m) 
-	{
-		  return condition.test(m);		 
+		condition = aCondition;
+		description = aDescription;
+		iD = anID;
 	}
 
 	/**

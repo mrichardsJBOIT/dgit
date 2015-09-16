@@ -1,4 +1,4 @@
-package com.dgit.model;
+package com.dgit.countwords.model;
 
 /**
 * Model class that encapsulates individual names. 
@@ -19,7 +19,6 @@ public class Name {
 	public void setValue(String value) {
 		this.value = value;
 	}
-
 
 	public int lenght(){
 		return value.length();
